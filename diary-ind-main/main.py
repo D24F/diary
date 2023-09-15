@@ -13,17 +13,22 @@ db = SQLAlchemy(app )
 
 #Tugas #1. Membuat tabel DB
 class Card(db.Model):
-    #id column
-    id = db.Column(db.Integer, primary_key=True)
-    #title column
+    # Creating the fields
+    # for column id
+    id = db.Column(db.Integer, primary_key = True)
+    # for column title
     title = db.Column(db.String(100), nullable=False)
-    #subtitle column
+    # for column subtitle
     subtitle = db.Column(db.String(100), nullable=False)
-    #text column
+    # for column text
     text = db.Column(db.Text, nullable=False)
 
+    # outputing the object and its id
     def __repr__(self):
         return f'<Card {self.id}>'
+
+
+
 
 
 # Menjalankan halaman dengan konten
@@ -33,16 +38,13 @@ def index():
     # Tugas #2. Menampilkan objek-objek dari DB di index.html
     cards = Card.query.order_by(Card.id).all()
 
-    return render_template('index.html',
-                           card = cards
-
-                           )
+    return render_template('index.html', cards=cards)
 
 # Menjalankan halaman dengan kartu
 @app.route('/card/<int:id>')
 def card(id):
     # Tugas #2. Menampilkan kartu yang tepat berdasarkan id-nya
-    Card.query.get(id)
+    card = Card.query.get(id)
 
     return render_template('card.html', card=card)
 
@@ -65,13 +67,12 @@ def form_create():
         db.session.add(card)
         db.session.commit()
 
-
-
-
         return redirect('/')
     else:
         return render_template('create_card.html')
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
